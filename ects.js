@@ -11,27 +11,40 @@
 ; (function () {
   'use strict'
 
+  // --- Named constants ---
+  const TITLE_COL_OFFSET = 7
+  const GRADE_COL_OFFSET = 6
+  const ECTS_COL_OFFSET = 3
+  const BADGE_Z_INDEX = 9999
+  const DROPDOWN_Z_INDEX = 10000
+  const DROPDOWN_MIN_WIDTH = '320px'
+  const DROPDOWN_MAX_HEIGHT = '400px'
+
   // run after the page is fully loaded
   window.addEventListener('load', () => {
     let totalEcts = 0
-    let items = []
-    let contentCell = document.querySelector('div.contentcell')
+    const items = []
+    const seenCourses = new Set()
+    const contentCell = document.querySelector('div.contentcell')
 
     if (!contentCell) return
 
     Array.from(contentCell.querySelectorAll('tr')).forEach((row) => {
-      let titleElement = row.querySelector('td:nth-last-child(7)')
-      let gradeElement = row.querySelector('td:nth-last-child(6) strong')
-      let ectsCell = row.querySelector('td:nth-last-child(3)')
+      const titleElement = row.querySelector(`td:nth-last-child(${TITLE_COL_OFFSET})`)
+      const gradeElement = row.querySelector(`td:nth-last-child(${GRADE_COL_OFFSET}) strong`)
+      const ectsCell = row.querySelector(`td:nth-last-child(${ECTS_COL_OFFSET})`)
 
       if (gradeElement && ectsCell) {
-        let grade = gradeElement.innerText.trim()
+        const grade = gradeElement.innerText.trim()
         if (grade !== '' && grade !== 'nicht genügend') {
-          let ects = parseFloat(ectsCell.innerText.trim().replace(',', '.'))
+          const courseName = titleElement ? titleElement.innerText.trim() : '—'
+          if (seenCourses.has(courseName)) return
+          seenCourses.add(courseName)
+          const ects = parseFloat(ectsCell.innerText.trim().replace(',', '.'))
           if (!isNaN(ects) && ects > 0) {
             totalEcts += ects
             items.push({
-              name: titleElement ? titleElement.innerText.trim() : '—',
+              name: courseName,
               grade,
               ects,
             })
@@ -45,7 +58,7 @@
 
     contentCell.style.position = 'relative'
 
-    let resultBox = document.createElement('div')
+    const resultBox = document.createElement('div')
     resultBox.innerHTML = `<strong>Total ECTS: ${totalEcts}</strong>`
 
     resultBox.style.cssText = `
@@ -58,14 +71,14 @@
       border-radius: 4px;
       color: #336;
       font-family: sans-serif;
-      z-index: 9999;
+      z-index: ${BADGE_Z_INDEX};
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       ${items.length > 0 ? 'cursor: pointer;' : ''}
       user-select: none;
     `
 
     // --- Dropdown list ---
-    let dropdown = document.createElement('div')
+    const dropdown = document.createElement('div')
     dropdown.style.cssText = `
       display: none;
       position: absolute;
@@ -76,16 +89,16 @@
       border: 1px solid #336;
       border-radius: 4px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      min-width: 320px;
-      max-height: 400px;
+      min-width: ${DROPDOWN_MIN_WIDTH};
+      max-height: ${DROPDOWN_MAX_HEIGHT};
       overflow-y: auto;
-      z-index: 10000;
+      z-index: ${DROPDOWN_Z_INDEX};
       font-family: sans-serif;
       font-size: 13px;
     `
 
     // Header row
-    let header = document.createElement('div')
+    const header = document.createElement('div')
     header.style.cssText = `
       display: flex;
       justify-content: space-between;
@@ -106,7 +119,7 @@
 
     // Item rows
     items.forEach((item, i) => {
-      let row = document.createElement('div')
+      const row = document.createElement('div')
       row.style.cssText = `
         display: flex;
         justify-content: space-between;
