@@ -95,6 +95,8 @@
       z-index: ${DROPDOWN_Z_INDEX};
       font-family: sans-serif;
       font-size: 13px;
+      cursor: auto;
+      user-select: text;
     `
 
 
@@ -151,6 +153,8 @@
           dropdown.style.display = 'none'
         }
       })
+
+      dropdown.addEventListener('click', (e) => e.stopPropagation())
 
       resultBox.appendChild(dropdown)
     }
