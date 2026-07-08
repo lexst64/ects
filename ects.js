@@ -11,7 +11,7 @@
 ; (function () {
   'use strict'
 
-  // --- Named constants ---
+
   const TITLE_COL_OFFSET = 7
   const GRADE_COL_OFFSET = 6
   const ECTS_COL_OFFSET = 3
@@ -20,7 +20,7 @@
   const DROPDOWN_MIN_WIDTH = '320px'
   const DROPDOWN_MAX_HEIGHT = '400px'
 
-  // run after the page is fully loaded
+
   window.addEventListener('load', () => {
     let totalEcts = 0
     const items = []
@@ -77,7 +77,7 @@
       user-select: none;
     `
 
-    // --- Dropdown list ---
+
     const dropdown = document.createElement('div')
     dropdown.style.cssText = `
       display: none;
@@ -97,7 +97,7 @@
       font-size: 13px;
     `
 
-    // Header row
+
     const header = document.createElement('div')
     header.style.cssText = `
       display: flex;
@@ -117,7 +117,7 @@
     `
     dropdown.appendChild(header)
 
-    // Item rows
+
     items.forEach((item, i) => {
       const row = document.createElement('div')
       row.style.cssText = `
@@ -137,7 +137,6 @@
     })
 
     if (items.length > 0) {
-      // Toggle dropdown on click
       let isOpen = false
       resultBox.addEventListener('click', (e) => {
         e.stopPropagation()
@@ -145,7 +144,7 @@
         dropdown.style.display = isOpen ? 'block' : 'none'
       })
 
-      // Close when clicking outside
+
       document.addEventListener('click', () => {
         if (isOpen) {
           isOpen = false
