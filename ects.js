@@ -11,7 +11,6 @@
 ; (function () {
   'use strict'
 
-
   const TITLE_COL_OFFSET = 7
   const GRADE_COL_OFFSET = 6
   const ECTS_COL_OFFSET = 3
@@ -19,7 +18,6 @@
   const DROPDOWN_Z_INDEX = 10000
   const DROPDOWN_MIN_WIDTH = '320px'
   const DROPDOWN_MAX_HEIGHT = '400px'
-
 
   window.addEventListener('load', () => {
     let totalEcts = 0
@@ -77,7 +75,6 @@
       user-select: none;
     `
 
-
     const dropdown = document.createElement('div')
     dropdown.style.cssText = `
       display: none;
@@ -99,7 +96,6 @@
       user-select: text;
     `
 
-
     const header = document.createElement('div')
     header.style.cssText = `
       display: flex;
@@ -118,7 +114,6 @@
       <span style="width:60px;text-align:right;">ECTS</span>
     `
     dropdown.appendChild(header)
-
 
     items.forEach((item, i) => {
       const row = document.createElement('div')
@@ -145,7 +140,6 @@
         isOpen = !isOpen
         dropdown.style.display = isOpen ? 'block' : 'none'
       })
-
 
       document.addEventListener('click', () => {
         if (isOpen) {
