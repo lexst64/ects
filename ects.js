@@ -19,8 +19,20 @@
   const DROPDOWN_MIN_WIDTH = '320px'
   const DROPDOWN_MAX_HEIGHT = '400px'
 
+  // Map Austrian grade strings to numeric values (1-5)
+  const parseNumericGrade = (gradeStr) => {
+    const g = gradeStr.toLowerCase().trim()
+    if (g === '1' || g === 'sehr gut') return 1
+    if (g === '2' || g === 'gut') return 2
+    if (g === '3' || g === 'befriedigend') return 3
+    if (g === '4' || g === 'genügend') return 4
+    return null // non-numeric grades (e.g. "mit Erfolg teilgenommen")
+  }
+
   window.addEventListener('load', () => {
     let totalEcts = 0
+    let gradedEctsSum = 0
+    let weightedGradeSum = 0
     const items = []
     const seenCourses = new Set()
     const contentCell = document.querySelector('div.contentcell')
@@ -41,6 +53,11 @@
           const ects = parseFloat(ectsCell.innerText.trim().replace(',', '.'))
           if (!isNaN(ects) && ects > 0) {
             totalEcts += ects
+            const numGrade = parseNumericGrade(grade)
+            if (numGrade !== null) {
+              gradedEctsSum += ects
+              weightedGradeSum += numGrade * ects
+            }
             items.push({
               name: courseName,
               grade,
@@ -53,11 +70,15 @@
 
     // fix floating point math errors
     totalEcts = Math.round(totalEcts * 10) / 10
+    const gpa = gradedEctsSum > 0
+      ? Math.round((weightedGradeSum / gradedEctsSum) * 100) / 100
+      : null
 
     contentCell.style.position = 'relative'
 
     const resultBox = document.createElement('div')
-    resultBox.innerHTML = `<strong>Total ECTS: ${totalEcts}</strong>`
+    const gpaText = gpa !== null ? ` | GPA: ${gpa.toFixed(2)}` : ''
+    resultBox.innerHTML = `<strong>ECTS: ${totalEcts}${gpaText}</strong>`
 
     resultBox.style.cssText = `
       position: absolute;
