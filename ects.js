@@ -1,10 +1,11 @@
 // ==UserScript==
-// @name         ECTS Calculator
+// @name         ECTS & GPA Calculator for KUSSS
 // @namespace    http://tampermonkey.net/
 // @version      1.1
-// @description  Calculates total ECTS of positively evaluated courses and injects it into the page
-// @author       You
+// @description  Calculates total ECTS and GPA of positively evaluated courses and injects it into the page
+// @author       lexst64
 // @match        https://kusss.jku.at/kusss/gradeinfo.action*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=jku.at
 // @grant        none
 // ==/UserScript==
 
@@ -15,18 +16,14 @@
   const GRADE_COL_OFFSET = 6
   const ECTS_COL_OFFSET = 3
   const BADGE_Z_INDEX = 9999
-  const DROPDOWN_Z_INDEX = 10000
-  const DROPDOWN_MIN_WIDTH = '320px'
-  const DROPDOWN_MAX_HEIGHT = '400px'
 
-  // Map Austrian grade strings to numeric values (1-5)
   const parseNumericGrade = (gradeStr) => {
     const g = gradeStr.toLowerCase().trim()
     if (g === '1' || g === 'sehr gut') return 1
     if (g === '2' || g === 'gut') return 2
     if (g === '3' || g === 'befriedigend') return 3
     if (g === '4' || g === 'genügend') return 4
-    return null // non-numeric grades (e.g. "mit Erfolg teilgenommen")
+    return null
   }
 
   window.addEventListener('load', () => {
@@ -70,6 +67,7 @@
 
     // fix floating point math errors
     totalEcts = Math.round(totalEcts * 10) / 10
+
     const gpa = gradedEctsSum > 0
       ? Math.round((weightedGradeSum / gradedEctsSum) * 100) / 100
       : null
@@ -92,87 +90,14 @@
       font-family: sans-serif;
       z-index: ${BADGE_Z_INDEX};
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      ${items.length > 0 ? 'cursor: pointer;' : ''}
-      user-select: none;
-    `
-
-    const dropdown = document.createElement('div')
-    dropdown.style.cssText = `
-      display: none;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 4px;
-      background: #fff;
-      border: 1px solid #336;
-      border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      min-width: ${DROPDOWN_MIN_WIDTH};
-      max-height: ${DROPDOWN_MAX_HEIGHT};
-      overflow-y: auto;
-      z-index: ${DROPDOWN_Z_INDEX};
-      font-family: sans-serif;
-      font-size: 13px;
-      cursor: auto;
       user-select: text;
     `
 
-    const header = document.createElement('div')
-    header.style.cssText = `
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 10px;
-      background: #336;
-      color: #fff;
-      font-weight: bold;
-      border-radius: 3px 3px 0 0;
-      position: sticky;
-      top: 0;
-    `
-    header.innerHTML = `
-      <span style="flex:1;">Course</span>
-      <span style="width:80px;text-align:center;">Grade</span>
-      <span style="width:60px;text-align:right;">ECTS</span>
-    `
-    dropdown.appendChild(header)
-
-    items.forEach((item, i) => {
-      const row = document.createElement('div')
-      row.style.cssText = `
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 5px 10px;
-        border-bottom: 1px solid #e0e0f0;
-        background: ${i % 2 === 0 ? '#f8f8ff' : '#fff'};
-      `
-      row.innerHTML = `
-        <span style="flex:1;padding-right:8px;">${item.name}</span>
-        <span style="width:80px;text-align:center;color:#336;">${item.grade}</span>
-        <span style="width:60px;text-align:right;font-weight:bold;">${item.ects}</span>
-      `
-      dropdown.appendChild(row)
-    })
-
-    if (items.length > 0) {
-      let isOpen = false
-      resultBox.addEventListener('click', (e) => {
-        e.stopPropagation()
-        isOpen = !isOpen
-        dropdown.style.display = isOpen ? 'block' : 'none'
-      })
-
-      document.addEventListener('click', () => {
-        if (isOpen) {
-          isOpen = false
-          dropdown.style.display = 'none'
-        }
-      })
-
-      dropdown.addEventListener('click', (e) => e.stopPropagation())
-
-      resultBox.appendChild(dropdown)
+    console.log(`Total ECTS: ${totalEcts}`)
+    if (gpa !== null) {
+      console.log(`GPA: ${gpa.toFixed(2)}`)
     }
+    console.table(items)
 
     contentCell.appendChild(resultBox)
   })
