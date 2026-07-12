@@ -76,7 +76,8 @@
 
     const resultBox = document.createElement('div')
     const gpaText = gpa !== null ? ` | GPA: ${gpa.toFixed(2)}` : ''
-    resultBox.innerHTML = `<strong>ECTS: ${totalEcts}${gpaText}</strong>`
+    const text = `ECTS: ${totalEcts}${gpaText}`
+    resultBox.innerHTML = `<strong>${text}</strong>`
 
     resultBox.style.cssText = `
       position: absolute;
@@ -93,10 +94,7 @@
       user-select: text;
     `
 
-    console.log(`Total ECTS: ${totalEcts}`)
-    if (gpa !== null) {
-      console.log(`GPA: ${gpa.toFixed(2)}`)
-    }
+    console.log(text)
     console.table(items)
 
     contentCell.appendChild(resultBox)
