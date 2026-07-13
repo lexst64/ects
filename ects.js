@@ -19,10 +19,10 @@
 
   const parseNumericGrade = (gradeStr) => {
     const g = gradeStr.toLowerCase().trim()
-    if (g === '1' || g === 'sehr gut') return 1
-    if (g === '2' || g === 'gut') return 2
-    if (g === '3' || g === 'befriedigend') return 3
-    if (g === '4' || g === 'genügend') return 4
+    if (g === 'sehr gut') return 1
+    if (g === 'gut') return 2
+    if (g === 'befriedigend') return 3
+    if (g === 'genügend') return 4
     return null
   }
 
@@ -43,7 +43,8 @@
 
       if (gradeElement && ectsCell) {
         const grade = gradeElement.innerText.trim()
-        if (grade !== '' && grade !== 'nicht genügend') {
+        const validGrades = ['sehr gut', 'gut', 'befriedigend', 'genügend']
+        if (validGrades.includes(grade.toLowerCase())) {
           const courseName = titleElement ? titleElement.innerText.trim() : '—'
           if (seenCourses.has(courseName)) return
           seenCourses.add(courseName)
