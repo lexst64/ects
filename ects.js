@@ -17,6 +17,11 @@
   const ECTS_COL_OFFSET = 3
   const BADGE_Z_INDEX = 9999
 
+  /**
+   * Course names to ignore for ects and gpa calculation. Change the list if needed.
+   */
+  const courseIgnoreList = []
+
   const parseNumericGrade = (gradeStr) => {
     const g = gradeStr.toLowerCase().trim()
     if (g === 'sehr gut') return 1
@@ -46,6 +51,7 @@
         const validGrades = ['sehr gut', 'gut', 'befriedigend', 'genügend']
         if (validGrades.includes(grade.toLowerCase())) {
           const courseName = titleElement ? titleElement.innerText.trim() : '—'
+          if (courseIgnoreList.includes(courseName)) return
           if (seenCourses.has(courseName)) return
           seenCourses.add(courseName)
           const ects = parseFloat(ectsCell.innerText.trim().replace(',', '.'))
@@ -79,6 +85,10 @@
     const gpaText = gpa !== null ? ` | GPA: ${gpa.toFixed(2)}` : ''
     const text = `ECTS: ${totalEcts}${gpaText}`
     resultBox.innerHTML = `<strong>${text}</strong>`
+    
+    if (courseIgnoreList.length > 0) {
+      resultBox.title = 'Course ignore list:\n' + courseIgnoreList.join('\n')
+    }
 
     resultBox.style.cssText = `
       position: absolute;
@@ -96,6 +106,7 @@
     `
 
     console.log(text)
+    console.log('Course ignore list:', JSON.stringify(courseIgnoreList))
     console.table(items)
 
     contentCell.appendChild(resultBox)
