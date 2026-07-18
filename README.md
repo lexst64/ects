@@ -6,6 +6,7 @@ A ligth-weight userscript that displays your total ECTS and weighted GPA on the 
 
 The script also logs to the console:
 - the total ECTS and weighted GPA
+- a course ignore list (see the section below)
 - a table with the courses selected for calculation (e.g. to check what courses the script managed to find)
 
 <details>
